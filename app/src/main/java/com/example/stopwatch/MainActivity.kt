@@ -12,13 +12,14 @@ class MainActivity : AppCompatActivity() {
 
     private var seconds = 0
     private var running : Boolean = false
-
+    private var wasRunning : Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (savedInstanceState !=null) {
             seconds = savedInstanceState.getInt("seconds")
             running = savedInstanceState.getBoolean("running")
+            wasRunning = savedInstanceState.getBoolean("wasRunning")
         }
         runTimer()
     }
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(saveItems)
         saveItems.putInt("seconds", seconds)
         saveItems.putBoolean("running", running)
+        saveItems.putBoolean("wasRunning", wasRunning)
     }
 
     fun onClickStart(view:View) {
@@ -40,8 +42,8 @@ class MainActivity : AppCompatActivity() {
         running = false
         seconds = 0
     }
-    private fun runTimer() {
 
+    private fun runTimer() {
         //val timeView: TextView = findViewById(R.id.time_view)
 val hand = Handler()
         hand.post(object : Runnable {
@@ -56,5 +58,18 @@ val hand = Handler()
                 hand.postDelayed(this, 1000)
             }
         })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        wasRunning = running
+    running = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(wasRunning) {
+            running = true
+        }
     }
 }

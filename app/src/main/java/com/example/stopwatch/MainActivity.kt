@@ -3,8 +3,10 @@ package com.example.stopwatch
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.PersistableBundle
 import android.view.View
 import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,8 +16,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (savedInstanceState !=null) {
+            seconds = savedInstanceState.getInt("seconds")
+            running = savedInstanceState.getBoolean("running")
+        }
         runTimer()
     }
+    override fun onSaveInstanceState(saveItems: Bundle) {
+        super.onSaveInstanceState(saveItems)
+        saveItems.putInt("seconds", seconds)
+        saveItems.putBoolean("running", running)
+    }
+
     fun onClickStart(view:View) {
         running = true
     }
@@ -29,7 +41,8 @@ class MainActivity : AppCompatActivity() {
         seconds = 0
     }
     private fun runTimer() {
-        val timeView: TextView = findViewById(R.id.time_view)
+
+        //val timeView: TextView = findViewById(R.id.time_view)
 val hand = Handler()
         hand.post(object : Runnable {
             override fun run() {
@@ -37,7 +50,8 @@ val hand = Handler()
                 val minutes = (seconds % 3600) / 60
                 val secs = seconds % 60
                 val time = String.format("%d:%02d:%02d", hours, minutes, secs)
-                timeView.text = time
+                time_view.text = time
+                //timeView.text = time
                 if (running) seconds++
                 hand.postDelayed(this, 1000)
             }
